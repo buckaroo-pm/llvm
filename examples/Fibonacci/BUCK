@@ -1,0 +1,9 @@
+cxx_binary(
+  name = 'Fibonacci', 
+  srcs = [
+    'fibonacci.cpp', 
+  ], 
+  deps = [
+    '//:llvm', 
+  ], 
+)

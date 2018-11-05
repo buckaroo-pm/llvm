@@ -1,0 +1,9 @@
+cxx_binary(
+  name = 'ModuleMaker', 
+  srcs = [
+    'ModuleMaker.cpp', 
+  ], 
+  deps = [
+    '//:llvm', 
+  ], 
+)

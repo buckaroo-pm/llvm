@@ -1,0 +1,9 @@
+cxx_binary(
+  name = 'ExceptionDemo', 
+  srcs = [
+    'ExceptionDemo.cpp', 
+  ], 
+  deps = [
+    '//:llvm', 
+  ], 
+)

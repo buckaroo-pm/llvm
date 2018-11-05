@@ -1,0 +1,6 @@
+[cxx]
+  should_remap_host_platform = true
+
+[project]
+  ignore = .git
+

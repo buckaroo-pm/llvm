@@ -1,0 +1,10 @@
+cxx_binary(
+  name = 'ParallelJIT', 
+  srcs = [
+    'ParallelJIT.cpp', 
+  ], 
+  deps = [
+    '//:llvm', 
+    '//:pthread', 
+  ], 
+)

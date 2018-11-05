@@ -1,0 +1,9 @@
+cxx_binary(
+  name = 'HowToUseJIT', 
+  srcs = [
+    'HowToUseJIT.cpp', 
+  ], 
+  deps = [
+    '//:llvm', 
+  ], 
+)
