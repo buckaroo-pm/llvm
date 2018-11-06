@@ -41,3 +41,8 @@ script:
 - buck build :lto -c ui.superconsole=DISABLED
 - buck build :llvm -c ui.superconsole=DISABLED
 - buck run examples/Fibonacci -c ui.superconsole=DISABLED
+
+cache:
+  directories:
+  - ./buck-out/cache
+
