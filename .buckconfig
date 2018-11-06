@@ -1,6 +1,6 @@
 [cxx]
   should_remap_host_platform = true
+  cxxflags = -pthread -fPIC -fvisibility-inlines-hidden -fno-exceptions -fno-rtti
 
 [project]
   ignore = .git
-

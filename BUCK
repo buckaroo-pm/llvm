@@ -24,6 +24,7 @@ prebuilt_cxx_library(
   name = 'pthread', 
   header_only = True, 
   exported_linker_flags = [
+    '-pthread', 
     '-lpthread', 
   ], 
   visibility = [
@@ -47,6 +48,30 @@ prebuilt_cxx_library(
   ], 
 )
 
+prebuilt_cxx_library(
+  name = 'm', 
+  header_only = True, 
+  exported_linker_flags = [
+    '-lm', 
+  ], 
+)
+
+prebuilt_cxx_library(
+  name = 'rt', 
+  header_only = True, 
+  exported_linker_flags = [
+    '-lrt', 
+  ], 
+)
+
+prebuilt_cxx_library(
+  name = 'atomic', 
+  header_only = True, 
+  exported_linker_flags = [
+    '-latomic', 
+  ], 
+)
+
 cmake_build_type = read_config('llvm', 'cmake_build_type', 'DEBUG')
 
 genrule(
@@ -61,7 +86,6 @@ genrule(
     'cmake/**/*.guess', 
     'cmake/**/*.txt', 
     'cmake/**/*.cpp', 
-    'docs/**/*.txt', 
     'include/**/*.build', 
     'include/**/*.cmake', 
     'include/**/*.in', 
@@ -74,17 +98,6 @@ genrule(
     'runtimes/**/*.in', 
     'runtimes/**/*.txt', 
     'resources/**/*.in', 
-    'test/**/*.in', 
-    'test/**/*.cpp', 
-    'test/**/*.txt', 
-    'tools/**/*.in', 
-    'tools/**/*.txt', 
-    'tools/**/*.cpp', 
-    'tools/**/*.c', 
-    'tools/**/*.h', 
-    'unittests/**/*.in', 
-    'unittests/**/*.cpp', 
-    'unittests/**/*.txt', 
     'utils/**/*.cpp', 
     'utils/**/*.cc', 
     'utils/**/*.c', 
@@ -95,7 +108,7 @@ genrule(
   ]), 
   cmd = ' && '.join([
     'cd $TMP', 
-    'cmake $SRCDIR -DLLVM_ENABLE_ZLIB=OFF -DLLVM_USE_PERF=OFF -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_APPEND_VC_REV=OFF -DCMAKE_BUILD_TYPE=' + cmake_build_type, 
+    'cmake $SRCDIR -DLLVM_ENABLE_ZLIB=OFF -DLLVM_ENABLE_RTTI=OFF -DLLVM_INCLUDE_TOOLS=OFF -DLLVM_INCLUDE_DOCS=OFF -DLLVM_INCLUDE_TESTS=OFF -DLLVM_USE_PERF=OFF -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_APPEND_VC_REV=OFF -DCMAKE_BUILD_TYPE=' + cmake_build_type, 
     'make llvm_vcsrevision_h', 
     'mkdir -p $OUT/llvm/Config', 
     'mkdir -p $OUT/llvm/Support', 
@@ -201,6 +214,10 @@ cxx_library(
   srcs = glob([
     'lib/Demangle/**/*.cpp',
   ]),
+
+  linker_flags = [
+    '-pthread', 
+  ], 
 )
 
 prebuilt_cxx_library(
@@ -217,6 +234,7 @@ cxx_library(
   srcs = glob([
     'lib/Support/*.c',
   ]),
+
   deps = [
     ':config',
     ':terminfo', 
@@ -233,11 +251,16 @@ cxx_library(
   ]),
   srcs = glob([
     'lib/Support/**/*.cpp',
+    'lib/Support/**/*.c',
   ]),
+
   deps = [
     ':pthread', 
     ':terminfo', 
     ':dl', 
+    ':rt', 
+    ':m', 
+    ':atomic', 
     ':config',
     ':adt',
     ':llvm-c',
@@ -260,6 +283,10 @@ cxx_library(
   srcs = glob([
     'lib/CodeGen/**/*.cpp',
   ]),
+
+  linker_flags = [
+    '-pthread', 
+  ], 
   deps = [
     ':analysis',
     ':support',
@@ -290,6 +317,10 @@ cxx_library(
   srcs = glob([
     'lib/Passes/**/*.cpp',
   ]),
+
+  linker_flags = [
+    '-pthread', 
+  ], 
   deps = [
     ':adt',
     ':support',
@@ -363,6 +394,7 @@ cxx_library(
   srcs = glob([
     'lib/IR/**/*.cpp',
   ]),
+ 
   deps = [
     ':adt',
     ':binary-format',
@@ -389,6 +421,10 @@ cxx_library(
   srcs = glob([
     'lib/Analysis/**/*.cpp',
   ]),
+
+  linker_flags = [
+    '-pthread', 
+  ], 
   deps = [
     ':adt',
     ':ir',
@@ -409,6 +445,7 @@ cxx_library(
   srcs = glob([
     'lib/Bitcode/Reader/**/*.cpp',
   ]),
+
   deps = [
     ':adt',
     ':support',
@@ -426,6 +463,7 @@ cxx_library(
   srcs = glob([
     'lib/Bitcode/Writer/**/*.cpp',
   ]),
+
   deps = [
     ':bitreader', 
     ':adt',
@@ -434,18 +472,6 @@ cxx_library(
     ':analysis',
     ':passes',
     ':object',
-  ],
-)
-
-cxx_library(
-  name = 'bitcode',
-  header_namespace = 'llvm',
-  exported_headers = subdir_glob([
-    ('include/llvm', 'Bitcode/**/*.h'),
-  ]),
-  deps = [
-    ':bitreader',
-    ':bitwriter',
   ],
 )
 
@@ -461,6 +487,7 @@ cxx_library(
   srcs = glob([
     'lib/Object/**/*.cpp',
   ]),
+
   deps = [
     ':adt',
     ':support',
@@ -479,6 +506,7 @@ cxx_library(
   srcs = glob([
     'lib/ObjectYAML/**/*.cpp',
   ]),
+
   deps = [
     ':support',
     ':object',
@@ -495,6 +523,7 @@ cxx_library(
   srcs = glob([
     'lib/ProfileData/**/*.cpp',
   ]),
+
   deps = [
     ':adt',
     ':support',
@@ -512,6 +541,7 @@ cxx_library(
   srcs = glob([
     'lib/AsmParser/**/*.cpp',
   ]),
+
   deps = [
     ':adt',
     ':support',
@@ -529,6 +559,7 @@ cxx_library(
   srcs = glob([
     'lib/IRReader/**/*.cpp',
   ]),
+
   deps = [
     ':llvm-c',
     ':support',
@@ -546,6 +577,7 @@ cxx_library(
   srcs = glob([
     'lib/Option/**/*.cpp',
   ]),
+
   deps = [
     ':adt',
     ':support',
@@ -561,6 +593,7 @@ cxx_library(
   srcs = glob([
     'lib/LibDriver/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/ToolDrivers/llvm-lib/Options.td', 'Options.inc', '-gen-opt-parser-defs'),
     ':adt',
@@ -579,6 +612,7 @@ cxx_library(
   srcs = glob([
     'lib/LineEditor/**/*.cpp',
   ]),
+
   deps = [
     ':adt',
     ':support',
@@ -597,6 +631,7 @@ cxx_library(
   srcs = glob([
     'lib/Linker/**/*.cpp',
   ]),
+
   deps = [
     ':adt',
     ':support',
@@ -615,13 +650,13 @@ cxx_library(
   srcs = glob([
     'lib/Transforms/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Transforms/InstCombine/InstCombineTables.td', 'InstCombineTables.inc', '-gen-searchable-tables'),
     ':ir',
     ':analysis',
     ':passes',
     ':profiledata',
-    ':bitcode', 
     ':bitreader',
     ':bitwriter',
     ':irreader',
@@ -653,6 +688,7 @@ cxx_library(
   platform_srcs = [
     ('^windows.*', debuginfo_windows_sources),
   ],
+
   deps = [
     ':adt',
     ':config',
@@ -669,7 +705,8 @@ cxx_library(
   ]),
   srcs = glob([
     'lib/MC/**/*.cpp',
-  ]),
+  ]), 
+
   deps = [
     ':adt',
     ':support',
@@ -689,6 +726,7 @@ cxx_library(
   srcs = glob([
     'lib/TableGen/**/*.cpp',
   ]),
+
   deps = [
     ':adt',
     ':support',
@@ -702,18 +740,59 @@ cxx_library(
     ('include/llvm', 'ExecutionEngine/**/*.h'),
   ]),
   srcs = glob([
-    'lib/ExecutionEngine/**/*.cpp',
-  ], excludes = glob([
-    'lib/ExecutionEngine/IntelJITEvents/**/*.cpp',
-    'lib/ExecutionEngine/PerfJITEvents/**/*.cpp',
-    'lib/ExecutionEngine/OProfileJIT/**/*.cpp',
-  ])),
+    'lib/ExecutionEngine/*.cpp',
+  ]), 
+
   deps = [
     ':config',
     ':ir',
     ':support',
     ':debuginfo',
     ':transforms',
+    ':runtimedyld', 
+  ],
+  visibility = [
+    'PUBLIC',
+  ],
+)
+
+cxx_library(
+  name = 'mcjit',
+  header_namespace = '',
+  headers = subdir_glob([
+    ('include', 'llvm/ExecutionEngine/**/*.h'),
+    ('lib/ExecutionEngine/MCJIT', '**/*.h'),
+  ]),
+  srcs = glob([
+    'lib/ExecutionEngine/MCJIT/*.cpp',
+  ]), 
+  deps = [
+    ':executionengine',
+    ':config',
+    ':ir',
+    ':support',
+    ':debuginfo',
+    ':transforms',
+  ],
+  visibility = [
+    'PUBLIC',
+  ],
+)
+
+cxx_library(
+  name = 'runtimedyld',
+  header_namespace = '',
+  headers = subdir_glob([
+    ('include', 'llvm/ExecutionEngine/**/*.h'),
+    ('lib/ExecutionEngine/RuntimeDyld', '**/*.h'),
+  ]),
+  srcs = glob([
+    'lib/ExecutionEngine/RuntimeDyld/**/*.cpp',
+  ]), 
+  deps = [
+    ':mc',
+    ':object',
+    ':support',
   ],
   visibility = [
     'PUBLIC',
@@ -731,7 +810,8 @@ cxx_library(
   ], excludes = glob([
     'lib/Fuzzer/FuzzerTracePC.cpp',
     'lib/Fuzzer/test/**/*.cpp',
-  ])),
+  ])), 
+
 )
 
 cxx_library(
@@ -743,7 +823,8 @@ cxx_library(
   ]),
   srcs = glob([
     'lib/Target/*.cpp',
-  ]),
+  ]), 
+
   deps = [
     ':adt',
     ':support',
@@ -762,7 +843,8 @@ cxx_library(
   ]),
   srcs = glob([
     'lib/BinaryFormat/**/*.cpp',
-  ]),
+  ]), 
+
   deps = [
     ':adt',
     ':support',
@@ -777,7 +859,8 @@ cxx_library(
   ]),
   srcs = glob([
     'lib/LTO/*.cpp',
-  ]),
+  ]), 
+
   deps = [
     ':adt',
     ':support',
@@ -800,7 +883,8 @@ cxx_library(
   ]),
   srcs = glob([
     'lib/XRay/*.cpp',
-  ]),
+  ]), 
+
   deps = [
     ':adt',
     ':support',
@@ -822,6 +906,7 @@ cxx_library(
     'lib/Target/AArch64/AArch64LegalizerInfo.cpp',
     'lib/Target/AArch64/AArch64RegisterBankInfo.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/AArch64/AArch64.td', 'AArch64GenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/AArch64/AArch64.td', 'AArch64GenRegisterBank.inc', '-gen-register-bank'),
@@ -866,6 +951,7 @@ cxx_library(
     'lib/Target/AMDGPU/AMDGPULegalizerInfo.cpp',
     'lib/Target/AMDGPU/AMDGPURegisterBankInfo.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/AMDGPU/AMDGPU.td', 'AMDGPUGenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/AMDGPU/AMDGPU.td', 'AMDGPUGenInstrInfo.inc', '-gen-instr-info'),
@@ -915,6 +1001,7 @@ cxx_library(
     'lib/Target/ARM/ARMCallLowering.cpp',
     'lib/Target/ARM/ARMInstructionSelector.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/ARM/ARM.td', 'ARMGenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/ARM/ARM.td', 'ARMGenInstrInfo.inc', '-gen-instr-info'),
@@ -949,6 +1036,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/AVR/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/AVR/AVR.td', 'AVRGenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/AVR/AVR.td', 'AVRGenInstrInfo.inc', '-gen-instr-info'),
@@ -979,6 +1067,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/BPF/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/BPF/BPF.td', 'BPFGenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/BPF/BPF.td', 'BPFGenInstrInfo.inc', '-gen-instr-info'),
@@ -1009,6 +1098,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/Hexagon/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/Hexagon/Hexagon.td', 'HexagonGenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/Hexagon/Hexagon.td', 'HexagonGenInstrInfo.inc', '-gen-instr-info'),
@@ -1040,6 +1130,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/Lanai/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/Lanai/Lanai.td', 'LanaiGenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/Lanai/Lanai.td', 'LanaiGenInstrInfo.inc', '-gen-instr-info'),
@@ -1071,6 +1162,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/Mips/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/Mips/Mips.td', 'MipsGenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/Mips/Mips.td', 'MipsGenInstrInfo.inc', '-gen-instr-info'),
@@ -1105,6 +1197,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/MSP430/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/MSP430/MSP430.td', 'MSP430GenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/MSP430/MSP430.td', 'MSP430GenInstrInfo.inc', '-gen-instr-info'),
@@ -1136,6 +1229,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/NVPTX/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/NVPTX/NVPTX.td', 'NVPTXGenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/NVPTX/NVPTX.td', 'NVPTXGenInstrInfo.inc', '-gen-instr-info'),
@@ -1161,6 +1255,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/PowerPC/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/PowerPC/PPC.td', 'PPCGenAsmWriter.inc', '-gen-asm-writer'),
     tablegen('lib/Target/PowerPC/PPC.td', 'PPCGenAsmMatcher.inc', '-gen-asm-matcher'),
@@ -1191,6 +1286,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/RISCV/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/RISCV/RISCV.td', 'RISCVGenMCCodeEmitter.inc', '-gen-emitter'),
     tablegen('lib/Target/RISCV/RISCV.td', 'RISCVGenRegisterInfo.inc', '-gen-register-info'),
@@ -1221,6 +1317,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/Sparc/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/Sparc/Sparc.td', 'SparcGenAsmWriter.inc', '-gen-asm-writer'),
     tablegen('lib/Target/Sparc/Sparc.td', 'SparcGenAsmMatcher.inc', '-gen-asm-matcher'),
@@ -1250,6 +1347,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/SystemZ/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/SystemZ/SystemZ.td', 'SystemZGenAsmWriter.inc', '-gen-asm-writer'),
     tablegen('lib/Target/SystemZ/SystemZ.td', 'SystemZGenAsmMatcher.inc', '-gen-asm-matcher'),
@@ -1279,6 +1377,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/WebAssembly/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/WebAssembly/WebAssembly.td', 'WebAssemblyGenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/WebAssembly/WebAssembly.td', 'WebAssemblyGenInstrInfo.inc', '-gen-instr-info'),
@@ -1307,7 +1406,8 @@ cxx_library(
   ]),
   srcs = glob([
     'lib/Target/X86/**/*.cpp',
-  ]),
+  ]), 
+
   deps = [
     tablegen('lib/Target/X86/X86.td', 'X86GenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/X86/X86.td', 'X86GenInstrInfo.inc', '-gen-instr-info'),
@@ -1345,6 +1445,7 @@ cxx_library(
   srcs = glob([
     'lib/Target/XCore/**/*.cpp',
   ]),
+
   deps = [
     tablegen('lib/Target/XCore/XCore.td', 'XCoreGenRegisterInfo.inc', '-gen-register-info'),
     tablegen('lib/Target/XCore/XCore.td', 'XCoreGenInstrInfo.inc', '-gen-instr-info'),
@@ -1388,6 +1489,7 @@ prebuilt_cxx_library(
     ':debuginfo',
     ':demangle',
     ':executionengine',
+    ':mcjit', 
     ':fuzzer',
     ':ir',
     ':irreader',

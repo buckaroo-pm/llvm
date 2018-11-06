@@ -3,8 +3,16 @@ cxx_binary(
   srcs = [
     'ParallelJIT.cpp', 
   ], 
+  compiler_flags = [
+    '-pthread', 
+  ], 
   deps = [
-    '//:llvm', 
+    # '//:llvm', 
+    '//:support', 
+    '//:executionengine', 
+    '//:mcjit', 
+    '//:mc', 
+    '//:x86', 
     '//:pthread', 
   ], 
 )
