@@ -31,6 +31,9 @@ before_install:
 script:
 - buck build :support -c ui.superconsole=DISABLED
 - buck build :ir -c ui.superconsole=DISABLED
+- buck build :irreader -c ui.superconsole=DISABLED
+- buck build :passes -c ui.superconsole=DISABLED
+- buck build :linker -c ui.superconsole=DISABLED
 - buck build :analysis -c ui.superconsole=DISABLED
 - buck build :transforms -c ui.superconsole=DISABLED
 - buck build :executionengine -c ui.superconsole=DISABLED
