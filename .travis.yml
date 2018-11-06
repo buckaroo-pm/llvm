@@ -29,5 +29,7 @@ before_install:
 - gcc --version
 
 script:
+- buck build :support
+- buck build :executionengine
 - buck build :llvm
 - buck run examples/Fibonacci
