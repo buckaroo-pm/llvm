@@ -15,5 +15,3 @@ documentation setup.
 
 If you are writing a package for LLVM, see docs/Packaging.rst for our
 suggestions.
-
-[![Travis](https://img.shields.io/travis/buckaroo-pm/llvm.svg)](https://travis-ci.org/buckaroo-pm/llvm) 
