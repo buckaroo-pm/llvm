@@ -35,6 +35,8 @@ script:
 - buck build :passes -c ui.superconsole=DISABLED
 - buck build :linker -c ui.superconsole=DISABLED
 - buck build :analysis -c ui.superconsole=DISABLED
+- buck build :mc -c ui.superconsole=DISABLED
+- buck build :target -c ui.superconsole=DISABLED
 - buck build :transforms -c ui.superconsole=DISABLED
 - buck build :executionengine -c ui.superconsole=DISABLED
 - buck build :codegen -c ui.superconsole=DISABLED
