@@ -37,5 +37,7 @@ script:
 - buck build :analysis -c ui.superconsole=DISABLED
 - buck build :transforms -c ui.superconsole=DISABLED
 - buck build :executionengine -c ui.superconsole=DISABLED
+- buck build :codegen -c ui.superconsole=DISABLED
+- buck build :lto -c ui.superconsole=DISABLED
 - buck build :llvm -c ui.superconsole=DISABLED
-- buck run examples/Fibonacci
+- buck run examples/Fibonacci -c ui.superconsole=DISABLED
