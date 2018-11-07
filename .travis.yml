@@ -43,7 +43,7 @@ script:
 - buck build :llvm-tblgen -c ui.superconsole=DISABLED
 - travis_wait 30 buck build :transforms -c ui.superconsole=DISABLED
 - buck build :executionengine -c ui.superconsole=DISABLED
-- buck build :codegen -c ui.superconsole=DISABLED
+- travis_wait 30 buck build :codegen -c ui.superconsole=DISABLED
 - buck build :lto -c ui.superconsole=DISABLED
 - buck build :llvm -c ui.superconsole=DISABLED
 - buck run examples/Fibonacci -c ui.superconsole=DISABLED
