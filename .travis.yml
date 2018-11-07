@@ -38,6 +38,8 @@ script:
 - buck build :mc -c ui.superconsole=DISABLED
 - buck build :target -c ui.superconsole=DISABLED
 - buck build :profiledata -c ui.superconsole=DISABLED
+- buck build :bitreader -c ui.superconsole=DISABLED
+- buck build :bitwriter -c ui.superconsole=DISABLED
 - buck build :llvm-tblgen -c ui.superconsole=DISABLED
 - buck build :instcombinetables-inc -c ui.superconsole=DISABLED
 - buck build :transforms -c ui.superconsole=DISABLED
