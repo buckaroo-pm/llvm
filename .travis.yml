@@ -45,7 +45,8 @@ script:
 - buck build :executionengine -c ui.superconsole=DISABLED
 - travis_wait 30 buck build :codegen -c ui.superconsole=DISABLED
 - buck build :lto -c ui.superconsole=DISABLED
-- travis_wait 30 buck build :debuginfo -c ui.superconsole=DISABLED
+- travis_wait 30 buck build :binary-format -c ui.superconsole=DISABLED
+- travis_wait 45 buck build :debuginfo -c ui.superconsole=DISABLED
 - buck build :fuzzer -c ui.superconsole=DISABLED
 - buck build :demangle -c ui.superconsole=DISABLED
 - buck build :object -c ui.superconsole=DISABLED
